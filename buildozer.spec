@@ -12,7 +12,7 @@ source.include_exts = py,png,jpg,jpeg,kv,atlas,ttf,otf,ttc,json
 # 版本
 version = 0.1.0
 
-# 运行依赖（p4a master 分支默认 Python 3.11，配 Kivy 2.3.1）
+# 运行依赖（p4a v2024.01.21 默认 Python 3.11.5，配 Kivy 2.3.1）
 requirements = python3,kivy==2.3.1
 
 # 屏幕方向（竖屏）
@@ -31,8 +31,9 @@ android.ndk = 25b
 android.archs = arm64-v8a, armeabi-v7a
 # 自动接受 SDK 许可证（CI 非交互环境必须开启，否则 build-tools 装不上）
 android.accept_sdk_license = True
-# 使用 p4a master 分支（稳定支持 Python<=3.12）；develop 分支强制 Python 3.14，Kivy 2.3.1 无对应 wheel
-p4a.branch = master
+# 固定 p4a v2024.01.21：python3/hostpython3 默认 3.11.5，kivy 走 CythonRecipe 源码编译，与 Kivy 2.3.1 配套
+# （p4a master 已默认 Python 3.14，且 Kivy 2.3.1 无 3.14 Android wheel，故不能再用 master）
+p4a.branch = v2024.01.21
 
 [buildozer]
 
