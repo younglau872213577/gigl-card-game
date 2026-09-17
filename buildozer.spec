@@ -29,6 +29,8 @@ android.minapi = 21
 android.ndk = 25b
 # 双架构，兼容新旧手机
 android.archs = arm64-v8a, armeabi-v7a
+# 自动接受 SDK 许可证（CI 非交互环境必须开启，否则 build-tools 装不上）
+android.accept_sdk_license = True
 
 [buildozer]
 
