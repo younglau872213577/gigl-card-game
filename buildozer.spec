@@ -13,7 +13,7 @@ source.include_exts = py,png,jpg,jpeg,kv,atlas,ttf,otf,ttc,json
 version = 0.1.0
 
 # 运行依赖（p4a v2024.01.21 默认 Python 3.11.5，配 Kivy 2.3.1）
-requirements = python3,kivy==2.3.1
+requirements = python3,kivy==2.3.1,filetype
 
 # 屏幕方向（竖屏）
 orientation = portrait
