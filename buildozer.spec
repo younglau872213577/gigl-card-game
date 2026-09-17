@@ -12,8 +12,8 @@ source.include_exts = py,png,jpg,jpeg,kv,atlas,ttf,otf,ttc,json
 # 版本
 version = 0.1.0
 
-# 运行依赖
-requirements = python3,kivy
+# 运行依赖（固定 Python 3.11，Kivy 2.3.1 才有对应 Android wheel；默认 3.14 找不到包）
+requirements = python3==3.11.9,kivy==2.3.1
 
 # 屏幕方向（竖屏）
 orientation = portrait
