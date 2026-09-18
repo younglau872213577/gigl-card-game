@@ -73,6 +73,7 @@ class CardButton(Button):
     """可拖拽卡牌。"""
     def __init__(self, game, card, **kw):
         super().__init__(**kw)
+        self.size_hint = (None, None)
         self.game = game
         self.card = card
         self.home_pos = (0, 0)
@@ -127,6 +128,7 @@ class BoxArea(Widget):
     """投放框（视觉区域 + 标题）。"""
     def __init__(self, game, label, **kw):
         super().__init__(**kw)
+        self.size_hint = (None, None)
         self.game = game
         self.label = label
         with self.canvas:
@@ -234,7 +236,7 @@ class GameScreen(FloatLayout):
     def _dialogue(self, text):
         d = Label(text=text, font_name=CN_F("14sp"), font_size="14sp",
                   color=COL["dialogue_fg"], halign="left", valign="top",
-                  text_size=(self.width - dp(24), None))
+                  text_size=(self.width - dp(24), None), size_hint=(None, None))
         d.bind(texture_size=lambda w, *a: setattr(w, "size", w.texture_size))
         d.size = (self.width - dp(24), dp(20))
         with d.canvas.before:
@@ -258,7 +260,7 @@ class GameScreen(FloatLayout):
         text = "\n".join(lv["content"])
         lab = Label(text=text, font_name=CN_F("14sp"), font_size="14sp",
                     color=COL["text"], halign="center", valign="middle",
-                    text_size=(self.width - dp(40), None))
+                    text_size=(self.width - dp(40), None), size_hint=(None, None))
         lab.size = (self.width - dp(40), self.height - dp(140))
         lab.pos = (dp(20), dp(70))
         self.add_widget(lab)
@@ -503,7 +505,7 @@ class GameScreen(FloatLayout):
         self._dialogue("小站：最后一道综合题，检验你是否真正掌握 GI+GL。")
         q = Label(text=lv["question"], font_name=CN_F("16sp"), font_size="16sp",
                   color=COL["text"], halign="left", valign="top",
-                  text_size=(self.width - dp(40), None))
+                  text_size=(self.width - dp(40), None), size_hint=(None, None))
         q.size = (self.width - dp(40), dp(60))
         q.pos = (dp(20), self.height - dp(180))
         self.add_widget(q)
@@ -539,7 +541,8 @@ class GameScreen(FloatLayout):
                 break
         lab = Label(text=f"总分：{self.score} 分\n\n{grade}",
                     font_name=CN_F("18sp"), font_size="18sp", color=COL["text"],
-                    halign="center", valign="middle", text_size=(self.width - dp(60), None))
+                    halign="center", valign="middle", text_size=(self.width - dp(60), None),
+                    size_hint=(None, None))
         lab.size = (self.width - dp(60), self.height - dp(200))
         lab.pos = (dp(30), dp(80))
         self.add_widget(lab)
@@ -552,7 +555,7 @@ class GameScreen(FloatLayout):
             lines = "无错题，完美通关！"
         wlab = Label(text="错题回顾：\n" + lines, font_name=CN_F("12sp"), font_size="12sp",
                      color=(0.5, 0.37, 0.25, 1), halign="left", valign="top",
-                     text_size=(self.width - dp(60), None))
+                     text_size=(self.width - dp(60), None), size_hint=(None, None))
         wlab.size = (self.width - dp(60), dp(120))
         wlab.pos = (dp(30), dp(60))
         self.add_widget(wlab)
