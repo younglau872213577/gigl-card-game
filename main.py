@@ -12,7 +12,7 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
-from kivy.graphics import Color, Rectangle
+from kivy.graphics import Color, Rectangle, RoundedRectangle, Line
 from kivy.core.text import LabelBase
 from kivy.metrics import dp
 from kivy.core.window import Window
@@ -47,30 +47,79 @@ def CN_F(size="14sp"):
     return "Roboto"  # 兜底（中文会显示方块，仅极少数环境）
 
 
-# ---------------- 颜色 ----------------
+# ---------------- emoji 字体注册 ----------------
+_emoji_font = "Roboto"
+for _path in ["NotoEmoji.ttf", "NotoColorEmoji.ttf"]:
+    if os.path.exists(_path):
+        try:
+            LabelBase.register(name="EMOJI", fn_regular=_path)
+            _emoji_font = "EMOJI"
+            break
+        except Exception:
+            continue
+
+
+def EMOJI_F():
+    return _emoji_font
+
+
+# ---------------- 颜色（鸿蒙风：柔和、低饱和、圆角丝滑） ----------------
 COL = {
-    "bg": (0.965, 0.945, 0.906, 1),
-    "header": (0.184, 0.322, 0.200, 1),
-    "dialogue": (1.0, 0.973, 0.882, 1),
-    "dialogue_fg": (0.365, 0.247, 0.216, 1),
-    "box": (1, 1, 1, 1),
-    "box_border": (0.54, 0.54, 0.54, 1),
-    "box_title": (0.91, 0.88, 0.80, 1),
-    "card": (1.0, 0.984, 0.902, 1),
-    "card_border": (0.79, 0.64, 0.15, 1),
-    "card_ok": (0.835, 0.929, 0.851, 1),
-    "card_ok_border": (0.18, 0.545, 0.341, 1),
-    "card_wrong": (0.973, 0.843, 0.855, 1),
-    "card_wrong_border": (0.753, 0.224, 0.169, 1),
-    "btn": (0.91, 0.88, 0.80, 1),
-    "btn_primary": (0.184, 0.322, 0.200, 1),
-    "text": (0.2, 0.2, 0.2, 1),
+    "bg": (0.95, 0.96, 0.97, 1),
+    "header": (0.11, 0.46, 0.36, 1),
+    "dialogue": (1, 1, 1, 1),
+    "dialogue_fg": (0.27, 0.33, 0.31, 1),
+    "box": (0.98, 0.99, 0.98, 1),
+    "box_border": (0.82, 0.88, 0.85, 1),
+    "box_title": (0.90, 0.95, 0.92, 1),
+    "card": (1, 1, 1, 1),
+    "card_border": (0.90, 0.93, 0.91, 1),
+    "card_ok": (0.88, 0.95, 0.90, 1),
+    "card_ok_border": (0.30, 0.62, 0.45, 1),
+    "card_wrong": (0.97, 0.90, 0.91, 1),
+    "card_wrong_border": (0.88, 0.40, 0.42, 1),
+    "btn": (0.94, 0.95, 0.94, 1),
+    "btn_primary": (0.11, 0.46, 0.36, 1),
+    "text": (0.20, 0.24, 0.23, 1),
     "text_light": (1, 1, 1, 1),
+    "shadow": (0, 0, 0, 0.08),
 }
 
 
+# ---------------- 食物 emoji 背景映射 ----------------
+FOOD_EMOJI = {
+    # 水果
+    "小番茄": "🍅", "草莓": "🍓", "李子": "🟣", "西梅": "🟣", "柚子": "🍊",
+    "樱桃": "🍒", "桃子": "🍑", "番石榴": "🍈", "木瓜": "🍈", "梨子": "🍐",
+    "橘子": "🍊", "苹果": "🍎", "橙子": "🍊", "蓝莓": "🫐", "火龙果": "🐉",
+    "柿子": "🍅", "冬枣": "🟤", "牛油果": "🥑", "榴莲": "🍈", "椰子": "🥥",
+    "猕猴桃": "🥝", "杏子": "🍑", "芒果": "🥭", "小葡萄": "🍇", "石榴": "🍎",
+    "菠萝": "🍍", "西瓜": "🍉", "哈密瓜": "🍈", "荔枝": "🍒", "菠萝蜜": "🍈",
+    "香蕉": "🍌", "葡萄": "🍇", "红枣": "🍒", "鲜柿": "🍅", "椰子肉": "🥥",
+    # 蔬菜
+    "菠菜": "🥬", "生菜": "🥬", "油菜": "🥬", "茼蒿": "🥬", "羽衣甘蓝": "🥬",
+    "黄瓜": "🥒", "冬瓜": "🍈", "番茄": "🍅", "西葫芦": "🥒", "香菇": "🍄",
+    "金针菇": "🍄", "海带": "🌿", "木耳": "🍄", "西蓝花": "🥦", "西兰花": "🥦",
+    "芦笋": "🌿", "秋葵": "🫑", "茄子": "🍆", "鹰嘴豆": "🫘", "豌豆": "🫛",
+    "甜菜根": "🍠", "胡萝卜": "🥕", "土豆": "🥔", "红薯": "🍠", "山药": "🍠",
+    "南瓜": "🎃", "绿叶菜": "🥬", "生鹰嘴豆": "🫘", "鲜豌豆": "🫛",
+    # 主食
+    "黑米": "🍚", "藜麦": "🌾", "燕麦米": "🌾", "普通糙米": "🍚", "红米": "🍚",
+    "糯米": "🍚", "短粒粳米": "🍚", "长粒籼米": "🍚", "燕麦": "🌾", "糙米": "🍚",
+    "全麦面包": "🍞", "白米饭": "🍚", "小米粥": "🥣", "红米饭": "🍚", "黑米饭": "🍚",
+    "白面包": "🍞", "即食麦片": "🥣",
+    # 蛋白 / 坚果 / 饮品 / 零食
+    "鸡蛋": "🥚", "鱼类": "🐟", "豆制品": "🫘", "原味坚果": "🥜",
+    "无糖酸奶": "🥛", "饼干": "🍪", "蛋糕": "🍰", "膨化食品": "🍿",
+}
+
+
+def food_emoji(name):
+    return FOOD_EMOJI.get(name, "🍽️")
+
+
 class CardButton(Button):
-    """可拖拽卡牌。"""
+    """可拖拽卡牌（鸿蒙风：圆角 + emoji 背景 + 柔和阴影）。"""
     def __init__(self, game, card, **kw):
         super().__init__(**kw)
         self.size_hint = (None, None)
@@ -79,19 +128,51 @@ class CardButton(Button):
         self.home_pos = (0, 0)
         self.current_box = None     # 所在框标签，None=卡牌池
         self.locked = False
+        self.wrong = False
         self._grab_off = (0, 0)
         self._down_pos = (0, 0)
         self.background_normal = ""
-        self.background_color = COL["card"]
+        self.background_color = (0, 0, 0, 0)
         self.color = COL["text"]
-        self.border = (1, 1, 1, 1)
+        self.border = (0, 0, 0, 0)
+        self.bold = True
+        # 圆角背景 + 阴影 + 圆角描边
+        with self.canvas.before:
+            Color(*COL["shadow"])
+            self.shadow_rect = RoundedRectangle(pos=(self.x + dp(1), self.y - dp(2)),
+                                                size=self.size, radius=[dp(12)])
+            self.bg_color = Color(*COL["card"])
+            self.bg_rect = RoundedRectangle(pos=self.pos, size=self.size, radius=[dp(12)])
+            self.border_color = Color(*COL["card_border"])
+            self.border_line = Line(rounded_rectangle=(self.x, self.y, self.width, self.height, dp(12)),
+                                    width=1.2)
+        self.bind(pos=self._redraw, size=self._redraw)
+        # emoji 背景（淡色大图标，铺满卡片）
+        self.emoji_lbl = Label(text=food_emoji(card["name"]), font_name=EMOJI_F(), font_size="34sp",
+                               color=(0.25, 0.28, 0.26, 0.12))
+        self.emoji_lbl.size = self.size
+        self.add_widget(self.emoji_lbl)
         self._refresh()
+
+    def _redraw(self, *a):
+        self.bg_rect.pos = self.pos
+        self.bg_rect.size = self.size
+        self.shadow_rect.pos = (self.x + dp(1), self.y - dp(2))
+        self.shadow_rect.size = self.size
+        self.border_line.rounded_rectangle = (self.x, self.y, self.width, self.height, dp(12))
+        self.emoji_lbl.pos = self.pos
+        self.emoji_lbl.size = self.size
 
     def _refresh(self):
         if self.locked:
-            self.background_color = COL["card_ok"]
+            self.bg_color.rgba = COL["card_ok"]
+            self.border_color.rgba = COL["card_ok_border"]
+        elif self.wrong:
+            self.bg_color.rgba = COL["card_wrong"]
+            self.border_color.rgba = COL["card_wrong_border"]
         else:
-            self.background_color = COL["card"]
+            self.bg_color.rgba = COL["card"]
+            self.border_color.rgba = COL["card_border"]
 
     def on_touch_down(self, touch):
         if self.locked:
@@ -125,37 +206,41 @@ class CardButton(Button):
 
 
 class BoxArea(Widget):
-    """投放框（视觉区域 + 标题）。"""
+    """投放框（鸿蒙风：圆角 + 柔和配色 + 标题条）。"""
     def __init__(self, game, label, **kw):
         super().__init__(**kw)
         self.size_hint = (None, None)
         self.game = game
         self.label = label
         with self.canvas:
-            Color(*COL["box_border"])
-            self.rect = Rectangle(pos=self.pos, size=self.size)
+            Color(*COL["shadow"])
+            self.shadow = RoundedRectangle(pos=(self.x + dp(1), self.y - dp(2)),
+                                           size=self.size, radius=[dp(16)])
             Color(*COL["box"])
-            self.inner = Rectangle(pos=(self.x + dp(2), self.y + dp(2)),
-                                   size=(self.width - dp(4), self.height - dp(4)))
+            self.rect = RoundedRectangle(pos=self.pos, size=self.size, radius=[dp(16)])
+            Color(*COL["box_border"])
+            self.border = Line(rounded_rectangle=(self.x, self.y, self.width, self.height, dp(16)),
+                               width=1.2)
             Color(*COL["box_title"])
-            self.title_rect = Rectangle(pos=(self.x + dp(2), self.y + self.height - dp(30)),
-                                        size=(self.width - dp(4), dp(28)))
+            self.title_rect = RoundedRectangle(pos=(self.x + dp(3), self.y + self.height - dp(30)),
+                                               size=(self.width - dp(6), dp(27)), radius=[dp(10)])
         self.bind(pos=self._redraw, size=self._redraw)
         # 标题文字
         self.title_lbl = Label(text=label, font_name=CN_F("15sp"), font_size="15sp",
-                               color=COL["text"], halign="center", valign="middle")
+                               color=COL["text"], bold=True, halign="center", valign="middle")
         self.title_lbl.bind(size=lambda *a: setattr(self.title_lbl, "text_size", self.title_lbl.size))
         self.add_widget(self.title_lbl)
 
     def _redraw(self, *a):
         self.rect.pos = self.pos
         self.rect.size = self.size
-        self.inner.pos = (self.x + dp(2), self.y + dp(2))
-        self.inner.size = (self.width - dp(4), self.height - dp(4))
-        self.title_rect.pos = (self.x + dp(2), self.y + self.height - dp(30))
-        self.title_rect.size = (self.width - dp(4), dp(28))
+        self.shadow.pos = (self.x + dp(1), self.y - dp(2))
+        self.shadow.size = self.size
+        self.border.rounded_rectangle = (self.x, self.y, self.width, self.height, dp(16))
+        self.title_rect.pos = (self.x + dp(3), self.y + self.height - dp(30))
+        self.title_rect.size = (self.width - dp(6), dp(27))
         self.title_lbl.pos = (self.x + dp(4), self.y + self.height - dp(30))
-        self.title_lbl.size = (self.width - dp(8), dp(28))
+        self.title_lbl.size = (self.width - dp(8), dp(27))
 
     def contains(self, cx, cy):
         return self.x <= cx <= self.x + self.width and self.y <= cy <= self.y + self.height
@@ -234,14 +319,19 @@ class GameScreen(FloatLayout):
         w.score_lbl.pos = (w.width * 0.6, 0)
 
     def _dialogue(self, text):
-        d = Label(text=text, font_name=CN_F("14sp"), font_size="14sp",
-                  color=COL["dialogue_fg"], halign="left", valign="top",
-                  text_size=(self.width - dp(24), None), size_hint=(None, None))
-        d.bind(texture_size=lambda w, *a: setattr(w, "size", w.texture_size))
-        d.size = (self.width - dp(24), dp(20))
+        d = Label(text=text, font_name=CN_F("13sp"), font_size="13sp",
+                  color=COL["dialogue_fg"], halign="left", valign="middle",
+                  text_size=(self.width - dp(40), dp(60)), size_hint=(None, None))
+        d.padding = (dp(12), dp(8))
+        d.size = (self.width - dp(24), dp(76))
         with d.canvas.before:
+            Color(*COL["shadow"])
+            d.shadow_rect = RoundedRectangle(pos=(d.x + dp(1), d.y - dp(2)),
+                                             size=d.size, radius=[dp(14)])
             Color(*COL["dialogue"])
-            Rectangle(pos=d.pos, size=d.size)
+            d.bg_rect = RoundedRectangle(pos=d.pos, size=d.size, radius=[dp(14)])
+            Color(*COL["box_border"])
+            d.border_line = Line(rounded_rectangle=(d.x, d.y, d.width, d.height, dp(14)), width=1)
         d.bind(pos=lambda w, *a: self._redraw_dialogue(w),
                size=lambda w, *a: self._redraw_dialogue(w))
         self.add_widget(d)
@@ -249,10 +339,11 @@ class GameScreen(FloatLayout):
         return d
 
     def _redraw_dialogue(self, w):
-        w.canvas.before.clear()
-        with w.canvas.before:
-            Color(*COL["dialogue"])
-            Rectangle(pos=w.pos, size=w.size)
+        w.bg_rect.pos = w.pos
+        w.bg_rect.size = w.size
+        w.shadow_rect.pos = (w.x + dp(1), w.y - dp(2))
+        w.shadow_rect.size = w.size
+        w.border_line.rounded_rectangle = (w.x, w.y, w.width, w.height, dp(14))
 
     # ---------------- 场景0：知识点 ----------------
     def _show_intro(self, lv):
@@ -277,8 +368,7 @@ class GameScreen(FloatLayout):
         self.current_level = lv
         self._header(f"{lv['name']}  {lv['difficulty']}")
         d = self._dialogue(f"小站（营养师）：{lv['dialogue']}")
-        d.pos = (dp(12), self.height - dp(108))
-        d.size = (self.width - dp(24), dp(54))
+        d.pos = (dp(12), self.height - dp(128))
 
         self.cards = gl.draw_cards(lv)
         for c in self.cards:
@@ -292,21 +382,22 @@ class GameScreen(FloatLayout):
 
     def _build_boxes(self, labels):
         n = len(labels)
-        top = self.height - dp(230)
+        top = self.height - dp(254)
         gap = dp(8)
         margin = dp(10)
         bw = (self.width - margin * 2 - gap * (n - 1)) / n
         for i, lab in enumerate(labels):
             bx = margin + i * (bw + gap)
-            b = BoxArea(self, lab, pos=(bx, top), size=(bw, dp(150)))
+            b = BoxArea(self, lab, pos=(bx, top), size=(bw, dp(120)))
             self.add_widget(b)
             self.boxes.append((lab, b))
 
     def _build_cards(self):
-        pool_top = self.height - dp(230) - dp(175)
+        pool_top = self.height - dp(318)
         margin = dp(10)
         cw = (self.width - margin * 2) / 4
-        ch = dp(60)
+        ch = dp(58)
+        self.pool_card_size = (cw - dp(6), ch)
         for i, c in enumerate(self.cards):
             col = i % 4
             row = i // 4
@@ -339,12 +430,27 @@ class GameScreen(FloatLayout):
     def _button(self, text, cmd, primary=False, pos=(0, 0), size=(0, 0)):
         b = Button(text=text, font_name=CN_F("15sp"), font_size="15sp",
                    background_normal="", background_down="",
-                   background_color=COL["btn_primary"] if primary else COL["btn"],
+                   background_color=(0, 0, 0, 0),
                    color=COL["text_light"] if primary else COL["text"],
                    pos=pos, size=size, size_hint=(None, None))
+        b._primary = primary
+        with b.canvas.before:
+            Color(*COL["shadow"])
+            b.shadow_rect = RoundedRectangle(pos=(b.x + dp(1), b.y - dp(2)),
+                                             size=b.size, radius=[dp(14)])
+            Color(*(COL["btn_primary"] if primary else COL["btn"]))
+            b.bg_rect = RoundedRectangle(pos=b.pos, size=b.size, radius=[dp(14)])
+        b.bind(pos=lambda w, *a: self._redraw_button(w),
+               size=lambda w, *a: self._redraw_button(w))
         b.bind(on_release=lambda *a: cmd())
         self.add_widget(b)
         return b
+
+    def _redraw_button(self, w):
+        w.bg_rect.pos = w.pos
+        w.bg_rect.size = w.size
+        w.shadow_rect.pos = (w.x + dp(1), w.y - dp(2))
+        w.shadow_rect.size = w.size
 
     # ---------------- 拖拽辅助 ----------------
     def lift_card(self, w):
@@ -369,6 +475,7 @@ class GameScreen(FloatLayout):
         self.card_box[w.card["name"]] = None
         hx, hy = self.card_home[w.card["name"]]
         w.pos = (hx, hy)
+        w.size = self.pool_card_size
 
     def _relayout_box(self, box_label):
         box = None
@@ -433,14 +540,16 @@ class GameScreen(FloatLayout):
             if box == ans:
                 self.card_locked[c["name"]] = True
                 w.locked = True
-                w.background_color = COL["card_ok"]
+                w.wrong = False
+                w._refresh()
                 correct += 1
             else:
                 if first_wrong is None:
                     first_wrong = c
                 self.wrong_records.append({"name": c["name"], "wrong": box, "right": ans})
                 self._return_card(w)
-                w.background_color = COL["card_wrong"]
+                w.wrong = True
+                w._refresh()
         for lab, box in self.boxes:
             self._relayout_box(lab)
         if first_wrong is not None:
